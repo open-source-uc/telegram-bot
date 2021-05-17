@@ -1,10 +1,11 @@
-from telegram import Update, Chat, ChatMember, ParseMode, ChatMemberUpdated, Bot
+from telegram import Update, Chat, ChatMember, ParseMode, ChatMemberUpdated, Bot, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from typing import Tuple, Optional
 from telegram.ext import (
     Updater,
     CommandHandler,
     CallbackContext,
     ChatMemberHandler,
+    ConversationHandler
 )
 import logging
 
@@ -14,6 +15,12 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+
+def escribir_archivo(nombre_archivo, lista):
+    for linea in lista:
+        with open(nombre_archivo, 'a') as archivo:
+            archivo.write('\n' + linea)
 
 
 def send(msg, chat_id, token):
@@ -73,7 +80,7 @@ def greet_chat_members(update: Update, _: CallbackContext) -> None:
 
     if not was_member and is_member:
         update.effective_chat.send_message(
-            f"¡Bienvenido {member_name} a Open Source UC! ¡Escribeme por interno para iniciar tu experiencia en el grupo!",
+            f"¡Bienvenido {member_name} a Open Source UC! ¡Escribeme por interno \'/start\' para iniciar tu experiencia en el grupo!",
             parse_mode=ParseMode.HTML,
         )
     elif was_member and not is_member:
@@ -129,3 +136,33 @@ def show_chats(update: Update, context: CallbackContext) -> None:
         f"and administrator in the channels with IDs {channel_ids}."
     )
     update.effective_message.reply_text(text)
+
+
+PRONOMBRE = range(1)
+
+
+def start(update: Update, _: CallbackContext) -> int:
+    reply_keyboard = [['El', 'Ella', 'Elle']]
+    user = update.message.from_user
+    update.message.reply_text(
+        '¡Hola ' + user.first_name + ', soy el bot que te acompañara en tu inicio de desafios de Open SourceUC! '
+        'Porfavor, escribe /cancel en el chat si te uniste por error o ya no quieres dar mas informacion.\n\n'
+        'Antes de iniciar, ¿Con que pronombre te identificas?',
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
+    )
+    # if update.message.reply_to_message.text is str:
+    #    pronombre_data = update.message.text
+    #    escribir_archivo('pronombres.csv', [user.first_name + " " + pronombre_data])
+
+    # update.message.reply_text(
+    #    '¡Excelente ' + user.first_name + '! Ahora que lo sabemos, podemos explicarte que necesitas hacer: INSERTE BIENVENIDA Y DESAFIO')
+
+
+def cancel(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text(
+        'Oh, ¿Ya te vas? Ojala podamos volver a hablar', reply_markup=ReplyKeyboardRemove()
+    )
+
+    return ConversationHandler.END
