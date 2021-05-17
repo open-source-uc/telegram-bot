@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
 from os import getenv
 
-from telegram import Update, Chat, ChatMember, ParseMode, ChatMemberUpdated, Bot
-from typing import Tuple, Optional
+from telegram import Update, Bot
 from telegram.ext import (
     Updater,
     CommandHandler,
