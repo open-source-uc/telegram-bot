@@ -17,7 +17,9 @@ import logging
 
 
 def main():
-    my_token = getenv('TELEGRAM_API_TOKEN')
+    load_dotenv()
+    my_token = getenv("TELEGRAM_API_TOKEN")
+    print(my_token)
 
     bot = Bot(token=my_token)
 
