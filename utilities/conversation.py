@@ -42,7 +42,7 @@ def start(update: Update, _: CallbackContext) -> int:
 def welcome(update: Update, _: CallbackContext) -> int:
     print('LLEGUE')
     reply_keyboard = [['GUIA', 'CACA']]
-    user = update.message.from_user
+    # user = update.message.from_user
     update.message.reply_text(
         'prefieres guia o caca?',
         reply_markup=ReplyKeyboardMarkup(
@@ -65,7 +65,7 @@ def cancel(update: Update, _: CallbackContext) -> int:
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
-        WELCOME: [MessageHandler(Filters.command, welcome)]
+        WELCOME: [CommandHandler('welcome', welcome)]
     },
     fallbacks=[CommandHandler('cancel', cancel)],
 )
