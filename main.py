@@ -1,4 +1,3 @@
-from basic import show_chats
 from os import getenv
 from utilities.conversation import conv_handler
 
@@ -8,7 +7,7 @@ from telegram.ext import (ChatMemberHandler, CommandHandler,
                           ConversationHandler, Updater)
 
 from utilities.greet_users import greet_chat_members
-from utilities.track_chats import track_chats
+from utilities.chats import track_chats, show_chats
 
 
 def main():
