@@ -3,8 +3,7 @@ from utilities.conversation import conv_handler
 
 from dotenv import load_dotenv
 from telegram import Bot, Update
-from telegram.ext import (ChatMemberHandler, CommandHandler,
-                          ConversationHandler, Updater)
+from telegram.ext import (ChatMemberHandler, CommandHandler, Updater)
 
 from utilities.greet_users import greet_chat_members
 from utilities.chats import track_chats, show_chats

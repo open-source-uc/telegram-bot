@@ -1,9 +1,7 @@
-import logging
 from typing import Optional, Tuple
 
-from telegram import (Bot, Chat, ChatMember, ChatMemberUpdated, ParseMode,
-                      ReplyKeyboardMarkup, ReplyKeyboardRemove, Update)
-from telegram.ext import CallbackContext, ConversationHandler
+from telegram import (ChatMember, ChatMemberUpdated, ParseMode, Update)
+from telegram.ext import CallbackContext
 from telegram import ChatMemberUpdated
 
 

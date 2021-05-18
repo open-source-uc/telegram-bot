@@ -1,9 +1,7 @@
 import logging
-from typing import Optional, Tuple
 from utilities.greet_users import extract_status_change
-from telegram import (Bot, Chat, ChatMember, ChatMemberUpdated, ParseMode,
-                      ReplyKeyboardMarkup, ReplyKeyboardRemove, Update)
-from telegram.ext import CallbackContext, ConversationHandler
+from telegram import (Chat, Update)
+from telegram.ext import CallbackContext
 
 # Enable logging
 logging.basicConfig(
