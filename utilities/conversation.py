@@ -8,6 +8,8 @@ from telegram.ext import CallbackContext, ConversationHandler, CommandHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 
+from threading import Thread
+
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -52,7 +54,8 @@ def gender(update: Update, _: CallbackContext) -> int:
     logger.info("Gender of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
         '¡Genial! ¿Te tinca me mandas una foto tuya? '
-        'para ver como eres y poder tener registro en el equipo, o manda /skip si no te sientes ' + gender_words[mensaje] + '.',
+        'para ver como eres y poder tener registro en el equipo, o manda /skip si no te sientes ' +
+        gender_words[mensaje] + '.',
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -87,7 +90,8 @@ def location(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     user_location = update.message.location
-    usuario['Lugar'] = [user_location.latitude, user_location.longitude]  # Latitud y longitud
+    usuario['Lugar'] = [user_location.latitude,
+                        user_location.longitude]  # Latitud y longitud
     logger.info(
         "Ubicacion de %s: %f / %f", user.first_name, user_location.latitude, user_location.longitude
     )
@@ -115,9 +119,9 @@ def bio(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     usuario['Biografia'] = mensaje
-    write_json(usuario)
     logger.info("Bio of %s: %s", user.first_name, update.message.text)
-    update.message.reply_text('¡Gracias, ahora, te presento tu primer desafio en el equipo de OPEN SOURCE UC!: PROCEDE A PRESENTAR DESAFIO')
+    update.message.reply_text(
+        '¡Gracias, ahora, te presento tu primer desafio en el equipo de OPEN SOURCE UC!: PROCEDE A PRESENTAR DESAFIO')
 
     return ConversationHandler.END
 
@@ -131,6 +135,11 @@ def cancel(update: Update, _: CallbackContext) -> int:
     )
 
     return ConversationHandler.END
+
+
+def send_to_json():
+    thread = Thread(target=write_json, args=(usuario))
+    thread.start()
 
 
 conv_handler = ConversationHandler(

@@ -1,12 +1,16 @@
 import json
+from threading import Lock
 from telegram.ext.dispatcher import run_async
 # function to add to JSON
 # TODO: Implementar que el bot detecte que existe el archivo
 # TODO: Implementar que el bot detecte que el archivo no este corrupto
 # TODO: Abrir y cerrar archivo
 
-@run_async
+lock = Lock()
+
+
 def write_json(new_data, filename='users.json'):
+    lock.acquire()
     with open(filename, 'r+') as file:
         # First we load existing data into a dict.
         file_data = json.load(file)
@@ -16,3 +20,4 @@ def write_json(new_data, filename='users.json'):
         file.seek(0)
         # convert back to json.
         json.dump(file_data, file, indent=4)
+    lock.release()
