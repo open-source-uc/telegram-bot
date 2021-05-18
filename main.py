@@ -1,3 +1,4 @@
+from utilities.track_chats import track_chats
 from dotenv import load_dotenv
 from os import getenv
 
@@ -5,14 +6,12 @@ from telegram import Update, Bot
 from telegram.ext import (
     Updater,
     CommandHandler,
-    CallbackContext,
     ChatMemberHandler,
     ConversationHandler,
-    Filters,
-    MessageHandler
 )
 import basic
-import logging
+
+from utilities.greet_users import greet_chat_members
 
 
 def main():
@@ -29,12 +28,12 @@ def main():
 
     # Keep track of which chats the bot is in
     dispatcher.add_handler(ChatMemberHandler(
-        basic.track_chats, ChatMemberHandler.MY_CHAT_MEMBER))
+        track_chats, ChatMemberHandler.MY_CHAT_MEMBER))
     dispatcher.add_handler(CommandHandler("show_chats", basic.show_chats))
 
     # Handle members joining/leaving chats.
     dispatcher.add_handler(ChatMemberHandler(
-        basic.greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
+        greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
 
     # Conversation starter
     # Starts the conversation with the user, asks them a gender question to be respectful
