@@ -4,6 +4,8 @@ from typing import Optional, Tuple
 from telegram import (Bot, Chat, ChatMember, ChatMemberUpdated, ParseMode,
                       ReplyKeyboardMarkup, ReplyKeyboardRemove, Update)
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler
+from telegram.ext.filters import Filters
+from telegram.ext.messagehandler import MessageHandler
 
 # Enable logging
 logging.basicConfig(
@@ -11,6 +13,8 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+WELCOME = range(1)
 
 
 def start(update: Update, _: CallbackContext) -> int:
@@ -24,12 +28,28 @@ def start(update: Update, _: CallbackContext) -> int:
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True),
     )
+
+    return WELCOME
+
     # if update.message.reply_to_message.text is str:
     #    pronombre_data = update.message.text
     #    escribir_archivo('pronombres.csv', [user.first_name + " " + pronombre_data])
 
     # update.message.reply_text(
     #    '¡Excelente ' + user.first_name + '! Ahora que lo sabemos, podemos explicarte que necesitas hacer: INSERTE BIENVENIDA Y DESAFIO')
+
+
+def welcome(update: Update, _: CallbackContext) -> int:
+    print('LLEGUE')
+    reply_keyboard = [['GUIA', 'CACA']]
+    user = update.message.from_user
+    update.message.reply_text(
+        'prefieres guia o caca?',
+        reply_markup=ReplyKeyboardMarkup(
+            reply_keyboard, one_time_keyboard=True),
+    )
+
+    return ConversationHandler.END
 
 
 def cancel(update: Update, _: CallbackContext) -> int:
@@ -45,7 +65,7 @@ def cancel(update: Update, _: CallbackContext) -> int:
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
+        WELCOME: [MessageHandler(Filters.command, welcome)]
     },
     fallbacks=[CommandHandler('cancel', cancel)],
 )
-dispatcher.add_handler(conv_handler)
