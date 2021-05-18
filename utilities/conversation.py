@@ -32,7 +32,7 @@ GENDER, PHOTO, LOCATION, BIO = range(4)
 def start(update: Update, _: CallbackContext) -> int:
     reply_keyboard = [['El', 'Ella', 'Elle']]
     user = update.message.from_user
-    usuario['Nombre'] = user
+    usuario['Nombre'] = str(user.first_name)
     update.message.reply_text(
         '¡Hola ' + user.first_name +
         ', soy el bot que te acompañara en tu inicio de desafios de Open SourceUC! '
