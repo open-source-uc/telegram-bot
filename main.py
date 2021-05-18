@@ -1,19 +1,14 @@
-from dotenv import load_dotenv
+from basic import show_chats
 from os import getenv
+from utilities.conversation import conv_handler
 
-from telegram import Update, Chat, ChatMember, ParseMode, ChatMemberUpdated, Bot
-from typing import Tuple, Optional
-from telegram.ext import (
-    Updater,
-    CommandHandler,
-    CallbackContext,
-    ChatMemberHandler,
-    ConversationHandler,
-    Filters,
-    MessageHandler
-)
-import basic
-import logging
+from dotenv import load_dotenv
+from telegram import Bot, Update
+from telegram.ext import (ChatMemberHandler, CommandHandler,
+                          ConversationHandler, Updater)
+
+from utilities.greet_users import greet_chat_members
+from utilities.track_chats import track_chats
 
 
 def main():
@@ -30,23 +25,16 @@ def main():
 
     # Keep track of which chats the bot is in
     dispatcher.add_handler(ChatMemberHandler(
-        basic.track_chats, ChatMemberHandler.MY_CHAT_MEMBER))
-    dispatcher.add_handler(CommandHandler("show_chats", basic.show_chats))
+        track_chats, ChatMemberHandler.MY_CHAT_MEMBER))
+    dispatcher.add_handler(CommandHandler("show_chats", show_chats))
 
     # Handle members joining/leaving chats.
     dispatcher.add_handler(ChatMemberHandler(
-        basic.greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
+        greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
 
     # Conversation starter
     # Starts the conversation with the user, asks them a gender question to be respectful
     # Ends when sends guide
-    GENDER = range(1)
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', basic.start)],
-        states={
-        },
-        fallbacks=[CommandHandler('cancel', basic.cancel)],
-    )
     dispatcher.add_handler(conv_handler)
 
     # Start the Bot
