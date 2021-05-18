@@ -9,45 +9,89 @@ from telegram.ext.messagehandler import MessageHandler
 
 # Enable logging
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
 
-WELCOME = range(1)
+GENDER, PHOTO, LOCATION, BIO = range(4)
 
 
 def start(update: Update, _: CallbackContext) -> int:
-    reply_keyboard = [['El', 'Ella', 'Elle']]
+    reply_keyboard = [['Boy', 'Girl', 'Other']]
+
+    update.message.reply_text(
+        'Hi! My name is Professor Bot. I will hold a conversation with you. '
+        'Send /cancel to stop talking to me.\n\n'
+        'Are you a boy or a girl?',
+        reply_markup=ReplyKeyboardMarkup(
+            reply_keyboard, one_time_keyboard=True),
+    )
+
+    return GENDER
+
+
+def gender(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
+    logger.info("Gender of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
-        '¡Hola ' + user.first_name +
-        ', soy el bot que te acompañara en tu inicio de desafios de Open SourceUC! '
-        'Porfavor, escribe /cancel en el chat si te uniste por error o ya no quieres dar mas informacion.\n\n'
-        'Antes de iniciar, ¿Con que pronombre te identificas?',
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True),
+        'I see! Please send me a photo of yourself, '
+        'so I know what you look like, or send /skip if you don\'t want to.',
+        reply_markup=ReplyKeyboardRemove(),
     )
 
-    return WELCOME
-
-    # if update.message.reply_to_message.text is str:
-    #    pronombre_data = update.message.text
-    #    escribir_archivo('pronombres.csv', [user.first_name + " " + pronombre_data])
-
-    # update.message.reply_text(
-    #    '¡Excelente ' + user.first_name + '! Ahora que lo sabemos, podemos explicarte que necesitas hacer: INSERTE BIENVENIDA Y DESAFIO')
+    return PHOTO
 
 
-def welcome(update: Update, _: CallbackContext) -> int:
-    print('LLEGUE')
-    reply_keyboard = [['GUIA', 'CACA']]
-    # user = update.message.from_user
+def photo(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    photo_file = update.message.photo[-1].get_file()
+    photo_file.download('user_photo.jpg')
+    logger.info("Photo of %s: %s", user.first_name, 'user_photo.jpg')
     update.message.reply_text(
-        'prefieres guia o caca?',
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True),
+        'Gorgeous! Now, send me your location please, or send /skip if you don\'t want to.'
     )
+
+    return LOCATION
+
+
+def skip_photo(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    logger.info("User %s did not send a photo.", user.first_name)
+    update.message.reply_text(
+        'I bet you look great! Now, send me your location please, or send /skip.'
+    )
+
+    return LOCATION
+
+
+def location(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    user_location = update.message.location
+    logger.info(
+        "Location of %s: %f / %f", user.first_name, user_location.latitude, user_location.longitude
+    )
+    update.message.reply_text(
+        'Maybe I can visit you sometime! At last, tell me something about yourself.'
+    )
+
+    return BIO
+
+
+def skip_location(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    logger.info("User %s did not send a location.", user.first_name)
+    update.message.reply_text(
+        'You seem a bit paranoid! At last, tell me something about yourself.'
+    )
+
+    return BIO
+
+
+def bio(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    logger.info("Bio of %s: %s", user.first_name, update.message.text)
+    update.message.reply_text('Thank you! I hope we can talk again some day.')
 
     return ConversationHandler.END
 
@@ -56,7 +100,7 @@ def cancel(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
-        'Oh, ¿Ya te vas? Ojala podamos volver a hablar', reply_markup=ReplyKeyboardRemove()
+        'Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove()
     )
 
     return ConversationHandler.END
@@ -65,7 +109,13 @@ def cancel(update: Update, _: CallbackContext) -> int:
 conv_handler = ConversationHandler(
     entry_points=[CommandHandler('start', start)],
     states={
-        WELCOME: [CommandHandler('welcome', welcome)]
+        GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
+        PHOTO: [MessageHandler(Filters.photo, photo), CommandHandler('skip', skip_photo)],
+        LOCATION: [
+            MessageHandler(Filters.location, location),
+            CommandHandler('skip', skip_location),
+        ],
+        BIO: [MessageHandler(Filters.text & ~Filters.command, bio)],
     },
     fallbacks=[CommandHandler('cancel', cancel)],
 )

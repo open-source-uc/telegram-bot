@@ -14,7 +14,7 @@ from utilities.track_chats import track_chats
 def main():
     load_dotenv()
     my_token = getenv("TELEGRAM_API_TOKEN")
-    print(my_token)
+    # print(my_token)
 
     bot = Bot(token=my_token)
 
