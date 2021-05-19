@@ -1,4 +1,5 @@
 import logging
+from os import path
 from utilities.write_json import write_json
 from typing import Optional, Tuple
 
@@ -16,9 +17,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-global gender_words
-global usuario
-
 
 gender_words = {
     'El': 'comodo',
@@ -26,15 +24,13 @@ gender_words = {
     'Elle': 'comode'
 }
 
-usuario = {}
-
 GENDER, PHOTO, LOCATION, BIO = range(4)
 
 
-def start(update: Update, _: CallbackContext) -> int:
+def start(update: Update, context: CallbackContext) -> int:
     reply_keyboard = [['El', 'Ella', 'Elle']]
     user = update.message.from_user
-    usuario['Nombre'] = str(user.first_name)
+    context.user_data['nombre'] = str(user.first_name)
     update.message.reply_text(
         '¡Hola ' + user.first_name +
         ', soy el bot que te acompañara en tu inicio de desafios de Open SourceUC! '
@@ -47,10 +43,10 @@ def start(update: Update, _: CallbackContext) -> int:
     return GENDER
 
 
-def gender(update: Update, _: CallbackContext) -> int:
+def gender(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    usuario['Pronombre'] = mensaje
+    context.user_data['pronombre'] = mensaje
     logger.info("Gender of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
         '¡Genial! ¿Te tinca me mandas una foto tuya? '
@@ -62,11 +58,12 @@ def gender(update: Update, _: CallbackContext) -> int:
     return PHOTO
 
 
-def photo(update: Update, _: CallbackContext) -> int:
+def photo(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     photo_file = update.message.photo[-1].get_file()
-    photo_file.download(user.first_name + '.jpg')
+    file1 = path.join('photos', user.first_name + '.jpg')
+    photo_file.download(custom_path=file1)
     logger.info("Foto de %s: %s", user.first_name, user.first_name + '.jpg')
     update.message.reply_text(
         '¡Increible! ¡Realmente fenomenal! Ahora, mandame tu ubicacion por favor, o manda /skip si no quieres.'
@@ -86,12 +83,12 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
     return LOCATION
 
 
-def location(update: Update, _: CallbackContext) -> int:
+def location(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     user_location = update.message.location
-    usuario['Lugar'] = [user_location.latitude,
-                        user_location.longitude]  # Latitud y longitud
+    context.user_data['coordenadas'] = [user_location.latitude,
+                                  user_location.longitude]  # Latitud y longitud
     logger.info(
         "Ubicacion de %s: %f / %f", user.first_name, user_location.latitude, user_location.longitude
     )
@@ -115,14 +112,14 @@ def skip_location(update: Update, _: CallbackContext) -> int:
     return BIO
 
 
-def bio(update: Update, _: CallbackContext) -> int:
+def bio(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    usuario['Biografia'] = mensaje
+    context.user_data['biografia'] = mensaje
     logger.info("Bio of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
         '¡Gracias, ahora, te presento tu primer desafio en el equipo de OPEN SOURCE UC!: PROCEDE A PRESENTAR DESAFIO')
-
+    send_to_json(context)
     return ConversationHandler.END
 
 
@@ -137,8 +134,8 @@ def cancel(update: Update, _: CallbackContext) -> int:
     return ConversationHandler.END
 
 
-def send_to_json():
-    thread = Thread(target=write_json, args=(usuario))
+def send_to_json(context):
+    thread = Thread(target=write_json, args=(context.user_data,))
     thread.start()
 
 
