@@ -1,20 +1,15 @@
-from os import getenv
-
-from dotenv import load_dotenv
-from telegram import Bot, Update
+from telegram import Update
 from telegram.ext import ChatMemberHandler, CommandHandler, Updater
 
-from utilities.chats import show_chats, track_chats
-from utilities.conversation import conv_handler
-from utilities.greet_users import greet_chat_members
+from osuc_companion.bot.chats import show_chats, track_chats
+from osuc_companion.bot.conversation import conv_handler
+from osuc_companion.bot.greet_users import greet_chat_members
+
+from osuc_companion.settings import TELEGRAM_API_TOKEN
 
 
 def main():
-    load_dotenv()
-    my_token = getenv("TELEGRAM_API_TOKEN")
-    # print(my_token)
-
-    bot = Bot(token=my_token)
+    my_token = TELEGRAM_API_TOKEN
 
     updater = Updater(my_token)
 
@@ -31,12 +26,14 @@ def main():
         greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
 
     # Conversation starter
-    # Starts the conversation with the user, asks them a gender question to be respectful
+    # Starts the conversation with the user,
+    # asks them a gender question to be respectful
     # Ends when sends guide
     dispatcher.add_handler(conv_handler)
 
     # Start the Bot
-    # We pass 'allowed_updates' to *only* handle updates with '(my_)chat_member' or 'message'
+    # We pass 'allowed_updates' to *only* handle updates
+    # with '(my_)chat_member' or 'message'
     # If you want to handle *all* updates, pass Update.ALL_TYPES
     updater.start_polling(
         allowed_updates=[Update.MESSAGE,

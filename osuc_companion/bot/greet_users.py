@@ -1,16 +1,16 @@
 from typing import Optional, Tuple
 
-from telegram import (ChatMember, ChatMemberUpdated, ParseMode, Update)
+from telegram import ChatMember, ChatMemberUpdated, ParseMode, Update
 from telegram.ext import CallbackContext
-from telegram import ChatMemberUpdated
 
 
 def extract_status_change(
     chat_member_update: ChatMemberUpdated,
 ) -> Optional[Tuple[bool, bool]]:
-    """Takes a ChatMemberUpdated instance and extracts whether the 'old_chat_member' was a member
-    of the chat and whether the 'new_chat_member' is a member of the chat. Returns None, if
-    the status didn't change."""
+    """Takes a ChatMemberUpdated instance and extracts whether
+    the 'old_chat_member' was a member
+    of the chat and whether the 'new_chat_member' is a member of the chat.
+    Returns None, if the status didn't change."""
     status_change = chat_member_update.difference().get("status")
     old_is_member, new_is_member = chat_member_update.difference().get("is_member",
                                                                        (None, None))
