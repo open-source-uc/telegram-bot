@@ -1,7 +1,7 @@
 import logging
-from os import path
-from utilities.write_json import write_json
-from typing import Optional, Tuple
+from osuc_companion.settings import USERS_AVATAR_PATH
+from pathlib import Path
+from osuc_companion.utilities.write_json import write_json
 
 from telegram import (Bot, Chat, ChatMember, ChatMemberUpdated, ParseMode,
                       ReplyKeyboardMarkup, ReplyKeyboardRemove, Update)
@@ -62,9 +62,9 @@ def photo(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     photo_file = update.message.photo[-1].get_file()
-    file1 = path.join('photos', user.first_name + '.jpg')
-    photo_file.download(custom_path=file1)
-    logger.info("Foto de %s: %s", user.first_name, user.first_name + '.jpg')
+    avatar = Path(USERS_AVATAR_PATH, user.first_name).with_suffix('.jpg')
+    photo_file.download(custom_path=str(avatar))
+    logger.info("Foto de %s: %s", user.first_name, avatar.stem)
     update.message.reply_text(
         '¡Increible! ¡Realmente fenomenal! Ahora, mandame tu ubicacion por favor, o manda /skip si no quieres.'
     )

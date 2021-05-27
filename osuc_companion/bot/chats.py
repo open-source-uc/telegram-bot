@@ -1,5 +1,5 @@
 import logging
-from utilities.greet_users import extract_status_change
+from osuc_companion.bot.greet_users import extract_status_change
 from telegram import (Chat, Update)
 from telegram.ext import CallbackContext
 
