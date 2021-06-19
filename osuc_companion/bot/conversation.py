@@ -66,7 +66,7 @@ def photo(update: Update, context: CallbackContext) -> int:
     photo_file.download(custom_path=str(avatar))
     logger.info("Foto de %s: %s", user.first_name, avatar.stem)
     update.message.reply_text(
-        '¡Increible! ¡Realmente fenomenal! Ahora, mandame tu ubicacion por favor, o manda /skip si no quieres.'
+        '¡Increible! ¡Realmente fenomenal! Ahora, escribeme tu ciudad por favor, o manda /skip si no quieres.'
     )
 
     return LOCATION
@@ -77,7 +77,7 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
     mensaje = update.message.text
     logger.info("User %s did not send a photo.", user.first_name)
     update.message.reply_text(
-        '¡Esta bien! Ahora, mandame tu ubicacion para la base de datos de Open Source UC (Para organizar eventos a futuro), o envia /skip.'
+        '¡Esta bien! Ahora, escribeme tu ciudad para la base de datos de Open Source UC (Para organizar eventos a futuro), o envia /skip.'
     )
 
     return LOCATION
@@ -86,11 +86,9 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
 def location(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    user_location = update.message.location
-    context.user_data['coordenadas'] = [user_location.latitude,
-                                  user_location.longitude]  # Latitud y longitud
+    context.user_data['ubicacion'] = mensaje
     logger.info(
-        "Ubicacion de %s: %f / %f", user.first_name, user_location.latitude, user_location.longitude
+        "Ubicacion enviada"
     )
     update.message.reply_text(
         '¡Excelente! Esta informacion servira para eventos presenciales futuros. Ahora, cuentame un poco de ti, en un pequeño parrafo '
@@ -103,7 +101,6 @@ def location(update: Update, context: CallbackContext) -> int:
 def skip_location(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    logger.info("User %s did not send a location.", user.first_name)
     update.message.reply_text(
         '¡Ok, respetamos tu privacidad! Ahora, cuentame un poco de ti, en un pequeño parrafo '
         'hablame sobre tus logros en la informatica, conocimiento y motivaciones de entrar a este equipo.'
@@ -145,7 +142,7 @@ conv_handler = ConversationHandler(
         GENDER: [MessageHandler(Filters.regex('^(El|Ella|Elle)$'), gender)],
         PHOTO: [MessageHandler(Filters.photo, photo), CommandHandler('skip', skip_photo)],
         LOCATION: [
-            MessageHandler(Filters.location, location),
+            MessageHandler(Filters.text, location),
             CommandHandler('skip', skip_location),
         ],
         BIO: [MessageHandler(Filters.text & ~Filters.command, bio)],
