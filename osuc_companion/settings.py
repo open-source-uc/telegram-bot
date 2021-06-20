@@ -17,6 +17,7 @@ DEBUG = env('DEBUG')
 
 # Telegram settings
 TELEGRAM_API_TOKEN = env("TELEGRAM_API_TOKEN")
+TELEGRAM_API_TOKEN_2 = env("TELEGRAM_API_TOKEN_2")
 
 DATA_PATH = Path(
     env(

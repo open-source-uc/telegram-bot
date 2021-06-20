@@ -54,7 +54,7 @@ def greet_chat_members(update: Update, _: CallbackContext) -> None:
 
     if not was_member and is_member:
         update.effective_chat.send_message(
-            f"¡Bienvenido {member_name} a Open Source UC! ¡Escribeme por interno \'/start\' para iniciar tu experiencia en el grupo!",
+            f"¡Bienvenide {member_name} a Open Source UC! ¡Escribele por interno \'/start\' a @EscribemeOSUCbot para iniciar tu experiencia en el grupo!",
             parse_mode=ParseMode.HTML,
         )
     elif was_member and not is_member:

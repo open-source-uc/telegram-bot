@@ -25,12 +25,6 @@ def main():
     dispatcher.add_handler(ChatMemberHandler(
         greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
 
-    # Conversation starter
-    # Starts the conversation with the user,
-    # asks them a gender question to be respectful
-    # Ends when sends guide
-    dispatcher.add_handler(conv_handler)
-
     # Start the Bot
     # We pass 'allowed_updates' to *only* handle updates
     # with '(my_)chat_member' or 'message'
