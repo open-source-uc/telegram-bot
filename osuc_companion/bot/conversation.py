@@ -33,9 +33,10 @@ def start(update: Update, context: CallbackContext) -> int:
     context.user_data['nombre'] = str(user.first_name)
     update.message.reply_text(
         '¡Hola ' + user.first_name +
-        ', soy el bot que te acompañara en tu inicio de desafios de Open SourceUC! '
+        ', soy el bot que te acompañara en tu proceso de postulacion de Open Source eUC! '
         'Porfavor, escribe /cancel en el chat si te uniste por error\n\n'
-        'Antes de iniciar, ¿Con que pronombre te identificas?',
+        'Antes de iniciar, ¿Con qué pronombre te identificas?\n\n'
+        '(En caso de que encuentres algun error con el bot, contactate con @Dyotson)',
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True),
     )
@@ -49,9 +50,8 @@ def gender(update: Update, context: CallbackContext) -> int:
     context.user_data['pronombre'] = mensaje
     logger.info("Gender of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
-        '¡Genial! ¿Te tinca me mandas una foto tuya? '
-        'para ver como eres y poder tener registro en el equipo, o manda /skip si no te sientes ' +
-        gender_words[mensaje] + '.',
+        '¡Genial! ¿Te tinca si me mandas una foto tuya? '
+        'Para que el equipo te pueda reconocer, o manda /skip si no quieres hacerlo.',
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -77,7 +77,7 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
     mensaje = update.message.text
     logger.info("User %s did not send a photo.", user.first_name)
     update.message.reply_text(
-        '¡Esta bien! Ahora, escribeme tu ciudad para la base de datos de Open Source UC (Para organizar eventos a futuro), o envia /skip.'
+        '¡Esta bien! Ahora, mandame la region donde vives. Esta nos servirá para la organización de eventos a futuro. O envía /skip.'
     )
 
     return LOCATION
@@ -91,8 +91,8 @@ def location(update: Update, context: CallbackContext) -> int:
         "Ubicacion enviada"
     )
     update.message.reply_text(
-        '¡Excelente! Esta informacion servira para eventos presenciales futuros. Ahora, cuentame un poco de ti, en un pequeño parrafo '
-        'hablame sobre tus logros en la informatica, conocimiento y motivaciones de entrar a este equipo.'
+        '¡Excelente! Ahora, cuéntame un poco de ti, en un pequeño parrafo '
+        'hablame sobre tu motivacion para entrar a el equipo de Open Source eUC.'
     )
 
     return BIO
@@ -103,7 +103,7 @@ def skip_location(update: Update, _: CallbackContext) -> int:
     mensaje = update.message.text
     update.message.reply_text(
         '¡Ok, respetamos tu privacidad! Ahora, cuentame un poco de ti, en un pequeño parrafo '
-        'hablame sobre tus logros en la informatica, conocimiento y motivaciones de entrar a este equipo.'
+        'hablame sobre tu motivacion para entrar a el equipo de Open Source eUC.'
     )
 
     return BIO
@@ -115,7 +115,7 @@ def bio(update: Update, context: CallbackContext) -> int:
     context.user_data['biografia'] = mensaje
     logger.info("Bio of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
-        '¡Gracias, ahora, te presento tu primer desafio en el equipo de OPEN SOURCE UC!: PROCEDE A PRESENTAR DESAFIO')
+        '¡Gracias, y bienvenido al equipo de Open Source eUC!')
     send_to_json(context)
     return ConversationHandler.END
 
@@ -124,7 +124,7 @@ def cancel(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
-        'Oh... ¿Te vas tan pronto? Ojala quieras volver a Open Source UC, si tuviste algun problema con el bot, no dudes en contactar a Dyotson '
+        '¿Te vas pronto? Puedes volver a iniciar esta conversación con /start. Si tuviste algun problema con el bot, no dudes en contactar a @Dyotson '
         '(Max Militzer) para arreglarlo', reply_markup=ReplyKeyboardRemove()
     )
 
