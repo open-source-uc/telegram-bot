@@ -1,6 +1,6 @@
 import logging
 from osuc_companion.bot.greet_users import extract_status_change
-from telegram import (Chat, Update)
+from telegram import Chat, Update
 from telegram.ext import CallbackContext
 
 # Enable logging
@@ -32,32 +32,33 @@ def track_chats(update: Update, context: CallbackContext) -> None:
             context.bot_data.setdefault("user_ids", set()).discard(chat.id)
     elif chat.type in [Chat.GROUP, Chat.SUPERGROUP]:
         if not was_member and is_member:
-            logger.info("%s added the bot to the group %s",
-                        cause_name, chat.title)
+            logger.info("%s added the bot to the group %s", cause_name, chat.title)
             context.bot_data.setdefault("group_ids", set()).add(chat.id)
         elif was_member and not is_member:
-            logger.info("%s removed the bot from the group %s",
-                        cause_name, chat.title)
+            logger.info("%s removed the bot from the group %s", cause_name, chat.title)
             context.bot_data.setdefault("group_ids", set()).discard(chat.id)
     else:
         if not was_member and is_member:
-            logger.info("%s added the bot to the channel %s",
-                        cause_name, chat.title)
+            logger.info("%s added the bot to the channel %s", cause_name, chat.title)
             context.bot_data.setdefault("channel_ids", set()).add(chat.id)
         elif was_member and not is_member:
-            logger.info("%s removed the bot from the channel %s",
-                        cause_name, chat.title)
+            logger.info(
+                "%s removed the bot from the channel %s", cause_name, chat.title
+            )
             context.bot_data.setdefault("channel_ids", set()).discard(chat.id)
 
 
 def show_chats(update: Update, context: CallbackContext) -> None:
     """Shows which chats the bot is in"""
-    user_ids = ", ".join(str(uid)
-                         for uid in context.bot_data.setdefault("user_ids", set()))
-    group_ids = ", ".join(str(gid)
-                          for gid in context.bot_data.setdefault("group_ids", set()))
+    user_ids = ", ".join(
+        str(uid) for uid in context.bot_data.setdefault("user_ids", set())
+    )
+    group_ids = ", ".join(
+        str(gid) for gid in context.bot_data.setdefault("group_ids", set())
+    )
     channel_ids = ", ".join(
-        str(cid) for cid in context.bot_data.setdefault("channel_ids", set()))
+        str(cid) for cid in context.bot_data.setdefault("channel_ids", set())
+    )
     text = (
         f"@{context.bot.username} is currently in a conversation with the user IDs {user_ids}."
         f" Moreover it is a member of the groups with IDs {group_ids} "

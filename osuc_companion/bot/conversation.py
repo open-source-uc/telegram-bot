@@ -3,8 +3,11 @@ from osuc_companion.settings import USERS_AVATAR_PATH
 from pathlib import Path
 from osuc_companion.utilities.write_json import write_json
 
-from telegram import (Bot, Chat, ChatMember, ChatMemberUpdated, ParseMode,
-                      ReplyKeyboardMarkup, ReplyKeyboardRemove, Update)
+from telegram import (
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    Update,
+)
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
@@ -13,32 +16,28 @@ from threading import Thread
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
 
-gender_words = {
-    'El': 'comodo',
-    'Ella': 'comoda',
-    'Elle': 'comode'
-}
+gender_words = {"El": "comodo", "Ella": "comoda", "Elle": "comode"}
 
 GENDER, PHOTO, LOCATION, BIO = range(4)
 
 
 def start(update: Update, context: CallbackContext) -> int:
-    reply_keyboard = [['El', 'Ella', 'Elle']]
+    reply_keyboard = [["El", "Ella", "Elle"]]
     user = update.message.from_user
-    context.user_data['nombre'] = str(user.first_name)
+    context.user_data["nombre"] = str(user.first_name)
     update.message.reply_text(
-        '¡Hola ' + user.first_name +
-        ', soy el bot que te acompañara en tu proceso de postulacion de Open Source eUC! '
-        'Porfavor, escribe /cancel en el chat si te uniste por error\n\n'
-        'Antes de iniciar, ¿Con qué pronombre te identificas?\n\n'
-        '(En caso de que encuentres algun error con el bot, contactate con @Dyotson)',
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True),
+        "¡Hola "
+        + user.first_name
+        + ", soy el bot que te acompañara en tu proceso de postulacion de Open Source eUC! "
+        "Porfavor, escribe /cancel en el chat si te uniste por error\n\n"
+        "Antes de iniciar, ¿Con qué pronombre te identificas?\n\n"
+        "(En caso de que encuentres algun error con el bot, contactate con @Dyotson)",
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
 
     return GENDER
@@ -47,11 +46,11 @@ def start(update: Update, context: CallbackContext) -> int:
 def gender(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    context.user_data['pronombre'] = mensaje
+    context.user_data["pronombre"] = mensaje
     logger.info("Gender of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
-        '¡Genial! ¿Te tinca si me mandas una foto tuya? '
-        'Para que el equipo te pueda reconocer, o manda /skip si no quieres hacerlo.',
+        "¡Genial! ¿Te tinca si me mandas una foto tuya? "
+        "Para que el equipo te pueda reconocer, o manda /skip si no quieres hacerlo.",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -62,11 +61,11 @@ def photo(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     photo_file = update.message.photo[-1].get_file()
-    avatar = Path(USERS_AVATAR_PATH, user.first_name).with_suffix('.jpg')
+    avatar = Path(USERS_AVATAR_PATH, user.first_name).with_suffix(".jpg")
     photo_file.download(custom_path=str(avatar))
     logger.info("Foto de %s: %s", user.first_name, avatar.stem)
     update.message.reply_text(
-        '¡Increible! ¡Realmente fenomenal! Ahora, escribeme tu ciudad por favor, o manda /skip si no quieres.'
+        "¡Increible! ¡Realmente fenomenal! Ahora, escribeme tu ciudad por favor, o manda /skip si no quieres."
     )
 
     return LOCATION
@@ -77,7 +76,7 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
     mensaje = update.message.text
     logger.info("User %s did not send a photo.", user.first_name)
     update.message.reply_text(
-        '¡Esta bien! Ahora, mandame la region donde vives. Esta nos servirá para la organización de eventos a futuro. O envía /skip.'
+        "¡Esta bien! Ahora, mandame la region donde vives. Esta nos servirá para la organización de eventos a futuro. O envía /skip."
     )
 
     return LOCATION
@@ -86,13 +85,11 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
 def location(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    context.user_data['ubicacion'] = mensaje
-    logger.info(
-        "Ubicacion enviada"
-    )
+    context.user_data["ubicacion"] = mensaje
+    logger.info("Ubicacion enviada")
     update.message.reply_text(
-        '¡Excelente! Ahora, cuéntame un poco de ti, en un pequeño parrafo '
-        'hablame sobre tu motivacion para entrar a el equipo de Open Source eUC.'
+        "¡Excelente! Ahora, cuéntame un poco de ti, en un pequeño parrafo "
+        "hablame sobre tu motivacion para entrar a el equipo de Open Source eUC."
     )
 
     return BIO
@@ -102,8 +99,8 @@ def skip_location(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     update.message.reply_text(
-        '¡Ok, respetamos tu privacidad! Ahora, cuentame un poco de ti, en un pequeño parrafo '
-        'hablame sobre tu motivacion para entrar a el equipo de Open Source eUC.'
+        "¡Ok, respetamos tu privacidad! Ahora, cuentame un poco de ti, en un pequeño parrafo "
+        "hablame sobre tu motivacion para entrar a el equipo de Open Source eUC."
     )
 
     return BIO
@@ -112,10 +109,9 @@ def skip_location(update: Update, _: CallbackContext) -> int:
 def bio(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    context.user_data['biografia'] = mensaje
+    context.user_data["biografia"] = mensaje
     logger.info("Bio of %s: %s", user.first_name, update.message.text)
-    update.message.reply_text(
-        '¡Gracias, y bienvenido al equipo de Open Source eUC!')
+    update.message.reply_text("¡Gracias, y bienvenido al equipo de Open Source eUC!")
     send_to_json(context)
     return ConversationHandler.END
 
@@ -124,8 +120,9 @@ def cancel(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
-        '¿Te vas pronto? Puedes volver a iniciar esta conversación con /start. Si tuviste algun problema con el bot, no dudes en contactar a @Dyotson '
-        '(Max Militzer) para arreglarlo', reply_markup=ReplyKeyboardRemove()
+        "¿Te vas pronto? Puedes volver a iniciar esta conversación con /start. Si tuviste algun problema con el bot, no dudes en contactar a @Dyotson "
+        "(Max Militzer) para arreglarlo",
+        reply_markup=ReplyKeyboardRemove(),
     )
 
     return ConversationHandler.END
@@ -137,15 +134,18 @@ def send_to_json(context):
 
 
 conv_handler = ConversationHandler(
-    entry_points=[CommandHandler('start', start)],
+    entry_points=[CommandHandler("start", start)],
     states={
-        GENDER: [MessageHandler(Filters.regex('^(El|Ella|Elle)$'), gender)],
-        PHOTO: [MessageHandler(Filters.photo, photo), CommandHandler('skip', skip_photo)],
+        GENDER: [MessageHandler(Filters.regex("^(El|Ella|Elle)$"), gender)],
+        PHOTO: [
+            MessageHandler(Filters.photo, photo),
+            CommandHandler("skip", skip_photo),
+        ],
         LOCATION: [
             MessageHandler(Filters.text, location),
-            CommandHandler('skip', skip_location),
+            CommandHandler("skip", skip_location),
         ],
         BIO: [MessageHandler(Filters.text & ~Filters.command, bio)],
     },
-    fallbacks=[CommandHandler('cancel', cancel)],
+    fallbacks=[CommandHandler("cancel", cancel)],
 )
