@@ -11,3 +11,8 @@ Se debe crear un .env con el TELEGRAM_API_TOKEN y TELEGRAM_API_TOKEN_2, ademas d
 - `poetry shell`
 - `python main.py`
 - `python main2.py`
+
+## Matenimiento
+### `conversation.py`
+
+  En `osuc_companion/text/replies.json` se pueden encontrar los textos de respuesta utilizados.

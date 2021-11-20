@@ -1,5 +1,5 @@
 import logging
-from osuc_companion.settings import USERS_AVATAR_PATH
+from osuc_companion.settings import CONVERSATIONS, GENDER_WORDS, MAINTAINER, USERS_AVATAR_PATH
 from pathlib import Path
 from osuc_companion.utilities.write_json import write_json
 
@@ -21,9 +21,16 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-gender_words = {"El": "comodo", "Ella": "comoda", "Elle": "comode"}
+gender_words = GENDER_WORDS
 
+"""
+Define the conversation handler states.
+"""
 GENDER, PHOTO, LOCATION, BIO = range(4)
+
+
+def add_skip_message(text: str) -> str:
+    return text + " " + CONVERSATIONS['skip_message']
 
 
 def start(update: Update, context: CallbackContext) -> int:
@@ -31,12 +38,9 @@ def start(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     context.user_data["nombre"] = str(user.first_name)
     update.message.reply_text(
-        "¡Hola "
-        + user.first_name
-        + ", soy el bot que te acompañara en tu proceso de postulacion de Open Source eUC! "
-        "Porfavor, escribe /cancel en el chat si te uniste por error\n\n"
-        "Antes de iniciar, ¿Con qué pronombre te identificas?\n\n"
-        "(En caso de que encuentres algun error con el bot, contactate con @Dyotson)",
+        CONVERSATIONS["start_message"].format(user.first_name, MAINTAINER)
+        + " "
+        + CONVERSATIONS['ask_gender'],
         reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True),
     )
 
@@ -49,8 +53,7 @@ def gender(update: Update, context: CallbackContext) -> int:
     context.user_data["pronombre"] = mensaje
     logger.info("Gender of %s: %s", user.first_name, update.message.text)
     update.message.reply_text(
-        "¡Genial! ¿Te tinca si me mandas una foto tuya? "
-        "Para que el equipo te pueda reconocer, o manda /skip si no quieres hacerlo.",
+        f"{CONVERSATIONS['ask_photo']} {CONVERSATIONS['skip_message']}",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -65,7 +68,7 @@ def photo(update: Update, context: CallbackContext) -> int:
     photo_file.download(custom_path=str(avatar))
     logger.info("Foto de %s: %s", user.first_name, avatar.stem)
     update.message.reply_text(
-        "¡Increible! ¡Realmente fenomenal! Ahora, escribeme tu ciudad por favor, o manda /skip si no quieres."
+        add_skip_message(CONVERSATIONS['ask_city'])
     )
 
     return LOCATION
@@ -76,7 +79,7 @@ def skip_photo(update: Update, _: CallbackContext) -> int:
     mensaje = update.message.text
     logger.info("User %s did not send a photo.", user.first_name)
     update.message.reply_text(
-        "¡Esta bien! Ahora, mandame la region donde vives. Esta nos servirá para la organización de eventos a futuro. O envía /skip."
+        add_skip_message(CONVERSATIONS['ask_region'])
     )
 
     return LOCATION
@@ -88,8 +91,7 @@ def location(update: Update, context: CallbackContext) -> int:
     context.user_data["ubicacion"] = mensaje
     logger.info("Ubicacion enviada")
     update.message.reply_text(
-        "¡Excelente! Ahora, cuéntame un poco de ti, en un pequeño parrafo "
-        "hablame sobre tu motivacion para entrar a el equipo de Open Source eUC."
+        CONVERSATIONS['ask_bio']
     )
 
     return BIO
@@ -99,8 +101,7 @@ def skip_location(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
     update.message.reply_text(
-        "¡Ok, respetamos tu privacidad! Ahora, cuentame un poco de ti, en un pequeño parrafo "
-        "hablame sobre tu motivacion para entrar a el equipo de Open Source eUC."
+        f"{CONVERSATIONS['privacy_message']} {CONVERSATIONS['ask_bio']}"
     )
 
     return BIO
@@ -111,7 +112,7 @@ def bio(update: Update, context: CallbackContext) -> int:
     mensaje = update.message.text
     context.user_data["biografia"] = mensaje
     logger.info("Bio of %s: %s", user.first_name, update.message.text)
-    update.message.reply_text("¡Gracias, y bienvenido al equipo de Open Source eUC!")
+    update.message.reply_text(CONVERSATIONS['end_message'])
     send_to_json(context)
     return ConversationHandler.END
 
@@ -120,9 +121,8 @@ def cancel(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     update.message.reply_text(
-        "¿Te vas pronto? Puedes volver a iniciar esta conversación con /start. Si tuviste algun problema con el bot, no dudes en contactar a @Dyotson "
-        "(Max Militzer) para arreglarlo",
-        reply_markup=ReplyKeyboardRemove(),
+        CONVERSATIONS['cancel_message'].format(MAINTAINER),
+        reply_markup=ReplyKeyboardRemove()
     )
 
     return ConversationHandler.END
