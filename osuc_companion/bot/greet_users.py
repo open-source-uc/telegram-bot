@@ -2,8 +2,10 @@ from typing import Optional, Tuple
 
 from telegram import ChatMember, ChatMemberUpdated, ParseMode, Update
 from telegram.ext import CallbackContext
+from osuc_companion.settings import CONVERSATIONS
 
 
+# TODO: ver porque chat_member_update puede ser None
 def extract_status_change(
     chat_member_update: ChatMemberUpdated,
 ) -> Optional[Tuple[bool, bool]]:
@@ -55,11 +57,11 @@ def greet_chat_members(update: Update, _: CallbackContext) -> None:
 
     if not was_member and is_member:
         update.effective_chat.send_message(
-            f"¡Bienvenide {member_name} a Open Source UC! ¡Escribele por interno '/start' a @EscribemeOSUCbot para iniciar tu experiencia en el grupo!",
+            CONVERSATIONS["start_message"].format(member_name),
             parse_mode=ParseMode.HTML,
         )
     elif was_member and not is_member:
         update.effective_chat.send_message(
-            f"¡Esperamos volver a verte {member_name}, gracias por todo el aporte!",
+            CONVERSATIONS["goodbye_message"].format(member_name),
             parse_mode=ParseMode.HTML,
         )

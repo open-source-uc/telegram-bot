@@ -1,4 +1,6 @@
-{
+  {
+  "welcome_message": "¡Bienvenide {member_name} a Open Source UC!\n¡Escríbele por interno '/start' a @EscribemeOSUCbot para iniciar tu experiencia en el grupo!",
+  "goodbye_message": "¡Esperamos volver a verte {member_name}, gracias por todo el aporte!",
   "start_message": "¡Hola {first_name}, soy el bot que te acompañara en tu proceso de postulación de Open Source eUC! Porfavor, escribe /cancel en el chat si te uniste por error.\n\n(En caso de que encuentres algun error con el bot, contactate con {maintainer})",
   "skip_message": "(Manda /skip si no quieres hacerlo)",
   "ask_gender": "¿Con qué pronombre te identificas?",
