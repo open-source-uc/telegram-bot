@@ -1,7 +1,7 @@
+import json
 from pathlib import Path
 
 import environ
-import json
 
 ROOT_DIR = Path(__file__).parents[1].absolute().resolve()
 

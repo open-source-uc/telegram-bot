@@ -1,7 +1,7 @@
 from telegram import Update
-from telegram.ext import ChatMemberHandler, CommandHandler, Updater, Dispatcher
+from telegram.ext import ChatMemberHandler, CommandHandler, Dispatcher, Updater
 
-from .bot import show_chats, track_chats, greet_chat_members
+from .bot import greet_chat_members, show_chats, track_chats
 from .settings import TELEGRAM_API_TOKEN
 
 

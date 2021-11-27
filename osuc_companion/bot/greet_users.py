@@ -2,6 +2,7 @@ from typing import Optional, Tuple
 
 from telegram import ChatMember, ChatMemberUpdated, ParseMode, Update
 from telegram.ext import CallbackContext
+
 from osuc_companion.settings import CONVERSATIONS
 
 

@@ -1,8 +1,9 @@
 import json
 from pathlib import Path
-from typing import Dict
-from osuc_companion.settings import USER_FILE_PATH
 from threading import Lock
+from typing import Dict
+
+from osuc_companion.settings import USER_FILE_PATH
 
 # function to add to JSON
 # TODO: Implementar que el bot detecte que existe el archivo

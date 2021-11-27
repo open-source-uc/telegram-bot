@@ -1,7 +1,9 @@
 import logging
-from osuc_companion.bot.greet_users import extract_status_change
+
 from telegram import Chat, Update
 from telegram.ext import CallbackContext
+
+from osuc_companion.bot.greet_users import extract_status_change
 
 # Enable logging
 logging.basicConfig(
