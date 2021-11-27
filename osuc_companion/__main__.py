@@ -1,9 +1,8 @@
 from telegram import Update
-from telegram.ext import ChatMemberHandler, CommandHandler, Updater
+from telegram.ext import ChatMemberHandler, CommandHandler, Updater, Dispatcher
 
-from osuc_companion.bot.chats import show_chats, track_chats
-from osuc_companion.bot.greet_users import greet_chat_members
-from osuc_companion.settings import TELEGRAM_API_TOKEN
+from .bot import show_chats, track_chats, greet_chat_members
+from .settings import TELEGRAM_API_TOKEN
 
 
 def main():
@@ -12,7 +11,7 @@ def main():
     updater = Updater(my_token)
 
     # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    dispatcher: Dispatcher = updater.dispatcher
 
     # Keep track of which chats the bot is in
     dispatcher.add_handler(
