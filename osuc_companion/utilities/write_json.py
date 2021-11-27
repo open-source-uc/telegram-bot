@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
-from typing import Dict
-from osuc_companion.settings import USER_FILE_PATH
 from threading import Lock
+
+from ..settings import USER_FILE_PATH
 
 # function to add to JSON
 # TODO: Implementar que el bot detecte que existe el archivo
@@ -13,7 +13,7 @@ from threading import Lock
 lock = Lock()
 
 
-def write_json(new_data: Dict, filename: Path = USER_FILE_PATH):
+def write_json(new_data: dict, filename: Path = USER_FILE_PATH):
     with lock:
         if not filename.exists():
             with filename.open("w") as file:

@@ -3,7 +3,10 @@ from typing import Optional, Tuple
 from telegram import ChatMember, ChatMemberUpdated, ParseMode, Update
 from telegram.ext import CallbackContext
 
+from ..settings import CONVERSATIONS
 
+
+# TODO: ver porque chat_member_update puede ser None
 def extract_status_change(
     chat_member_update: ChatMemberUpdated,
 ) -> Optional[Tuple[bool, bool]]:
@@ -12,9 +15,7 @@ def extract_status_change(
     of the chat and whether the 'new_chat_member' is a member of the chat.
     Returns None, if the status didn't change."""
     status_change = chat_member_update.difference().get("status")
-    old_is_member, new_is_member = chat_member_update.difference().get(
-        "is_member", (None, None)
-    )
+    old_is_member, new_is_member = chat_member_update.difference().get("is_member", (None, None))
 
     if status_change is None:
         return None
@@ -55,11 +56,11 @@ def greet_chat_members(update: Update, _: CallbackContext) -> None:
 
     if not was_member and is_member:
         update.effective_chat.send_message(
-            f"¡Bienvenide {member_name} a Open Source UC! ¡Escribele por interno '/start' a @EscribemeOSUCbot para iniciar tu experiencia en el grupo!",
+            CONVERSATIONS["start_message"].format(member_name),
             parse_mode=ParseMode.HTML,
         )
     elif was_member and not is_member:
         update.effective_chat.send_message(
-            f"¡Esperamos volver a verte {member_name}, gracias por todo el aporte!",
+            CONVERSATIONS["goodbye_message"].format(member_name),
             parse_mode=ParseMode.HTML,
         )

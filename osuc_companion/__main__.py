@@ -1,9 +1,8 @@
 from telegram import Update
-from telegram.ext import ChatMemberHandler, CommandHandler, Updater
+from telegram.ext import ChatMemberHandler, CommandHandler, Dispatcher, Updater
 
-from osuc_companion.bot.chats import show_chats, track_chats
-from osuc_companion.bot.greet_users import greet_chat_members
-from osuc_companion.settings import TELEGRAM_API_TOKEN
+from .bot import greet_chat_members, show_chats, track_chats
+from .settings import TELEGRAM_API_TOKEN
 
 
 def main():
@@ -12,18 +11,14 @@ def main():
     updater = Updater(my_token)
 
     # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    dispatcher: Dispatcher = updater.dispatcher
 
     # Keep track of which chats the bot is in
-    dispatcher.add_handler(
-        ChatMemberHandler(track_chats, ChatMemberHandler.MY_CHAT_MEMBER)
-    )
+    dispatcher.add_handler(ChatMemberHandler(track_chats, ChatMemberHandler.MY_CHAT_MEMBER))
     dispatcher.add_handler(CommandHandler("show_chats", show_chats))
 
     # Handle members joining/leaving chats.
-    dispatcher.add_handler(
-        ChatMemberHandler(greet_chat_members, ChatMemberHandler.CHAT_MEMBER)
-    )
+    dispatcher.add_handler(ChatMemberHandler(greet_chat_members, ChatMemberHandler.CHAT_MEMBER))
 
     # Start the Bot
     # We pass 'allowed_updates' to *only* handle updates
