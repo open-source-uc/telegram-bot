@@ -1,8 +1,4 @@
-from telegram import Update
-from telegram.ext import ChatMemberHandler, CommandHandler, Updater
-
 from osuc_companion.bot.conversation import conv_handler
-
 from osuc_companion.settings import TELEGRAM_API_TOKEN_2
 
 
@@ -29,5 +25,5 @@ def main():
     updater.idle()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

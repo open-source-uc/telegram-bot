@@ -1,0 +1,12 @@
+{
+  "start_message": "¡Hola {first_name}, soy el bot que te acompañara en tu proceso de postulación de Open Source eUC! Porfavor, escribe /cancel en el chat si te uniste por error.\n\n(En caso de que encuentres algun error con el bot, contactate con {maintainer})",
+  "skip_message": "(Manda /skip si no quieres hacerlo)",
+  "ask_gender": "¿Con qué pronombre te identificas?",
+  "ask_photo": "¡Genial! ¿Te tinca si me mandas una foto tuya? Es para que el equipo te pueda reconocer!",
+  "ask_city": "¡Increíble! ¡Realmente fenomenal! Ahora, escríbeme tu ciudad por favor",
+  "ask_region": "¡Esta bien! Mándame la región donde vives. Esta nos servirá para la organización de eventos a futuro.",
+  "ask_bio": "Ahora, cuéntame un poco de ti, en un pequeño parrafo háblame sobre tu motivación para entrar al equipo de Open Source eUC.",
+  "privacy_message": "¡Ok, respetamos tu privacidad!",
+  "end_message": "¡Gracias, y bienvenido al equipo de Open Source eUC!",
+  "cancel_message": "¿Te vas pronto? Puedes volver a iniciar esta conversación con /start. Si tuviste algun problema con el bot, no dudes en contactar a {maintainer} para arreglarlo"
+}
