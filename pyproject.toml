@@ -1,9 +1,14 @@
 [tool.poetry]
 name = "osuc-telegram-bot"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
-license = "MIT"
+description = "Bot de telegram"
+authors = ["Dyotson <maxmilitzer@gmail.com>"]
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
 
 [tool.poetry.dependencies]
 python = "^3.8"

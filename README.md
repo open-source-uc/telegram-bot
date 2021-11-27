@@ -21,6 +21,13 @@ python -m osuc_companion
 - `$ cp .env.example .env`
 - Remplazar valores para la API
 
+## Antes de hacer commit
+
+```bash
+black osuc_companion
+isort osuc_companion
+```
+
 ## Matenimiento
 
 ### `conversation.py`

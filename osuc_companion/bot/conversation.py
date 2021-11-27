@@ -7,8 +7,8 @@ from telegram.ext import CallbackContext, CommandHandler, ConversationHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 
-from osuc_companion.settings import CONVERSATIONS, GENDER_WORDS, MAINTAINER, USERS_AVATAR_PATH
-from osuc_companion.utilities.write_json import write_json
+from ..settings import CONVERSATIONS, GENDER_WORDS, MAINTAINER, USERS_AVATAR_PATH
+from ..utilities.write_json import write_json
 
 # Enable logging
 logging.basicConfig(
@@ -90,9 +90,7 @@ def location(update: Update, context: CallbackContext) -> int:
 def skip_location(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     mensaje = update.message.text
-    update.message.reply_text(
-        f"{CONVERSATIONS['privacy_message']} {CONVERSATIONS['ask_bio']}"
-    )
+    update.message.reply_text(f"{CONVERSATIONS['privacy_message']} {CONVERSATIONS['ask_bio']}")
 
     return BIO
 
